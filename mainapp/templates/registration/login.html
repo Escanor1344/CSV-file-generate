@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+
+<style>
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+        input {
+            margin-bottom: 20px;
+        }
+        .Send-button {
+            display: flex;
+            justify-content: center;
+        }
+
+</style>
+
+
+{% if form.errors %}
+<p>Your username and password didn't match. Please try again.</p>
+{% endif %}
+
+{% if next %}
+    {% if user.is_authenticated %}
+    <p>Your account doesn't have access to this page. To proceed,
+    please login with an account that has access.</p>
+    {% else %}
+    <p>Please login to see this page.</p>
+    {% endif %}
+{% endif %}
+
+<form method="post" action="{% url 'login' %}">
+{% csrf_token %}
+
+    <div>
+        {% for field in form %}
+        <div class="form-group">
+            {{field.label_tag}}
+            <div>{{field}}</div>
+            {% if field.errors %}
+            {% for error in field.errors %}
+            <div class="alert alert-danger">
+                {{error}}
+            </div>
+            {% endfor %}
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+
+<div class="Send-button"><input class="btn btn-outline-secondary" type="submit" value="Send"></div>
+
+</form>
+
+{% endblock %}

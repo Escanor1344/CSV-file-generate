@@ -1,0 +1,19 @@
+.padding_table {
+  padding: 0 50px;
+}
+table {
+    counter-reset: tableCount;
+}
+.counterCell:before {
+    content: counter(tableCount);
+    counter-increment: tableCount;
+}
+.schema-form {
+    border-bottom: 1px solid black;
+}
+.hidden {
+    display: none
+}
+form {
+    display: inline-block; //Or display: inline;
+}
