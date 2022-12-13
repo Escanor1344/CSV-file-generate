@@ -2,7 +2,7 @@
 
 {% block content %}
 
-
+<!--bootstrap icons-->
 <div class="padding_table">
   <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
   <symbol id="check-circle-fill" viewBox="0 0 16 16">
@@ -17,7 +17,7 @@
 </svg>
 </div>
 
-
+<!--django message framework-->
 <div class="padding_table">
 {% if messages %}
 {% for message in messages %}
@@ -47,7 +47,7 @@
 <a href="newschema" class="btn btn-success" style="float: right;">New Schema</a>
 </h1>
 
-
+<!--schema-->
 {% if user.is_authenticated %}
 <table class="padded table table-bordered table-hover caption-top table-bordered border-primary border border-2" style="">
   <thead>

@@ -13,6 +13,7 @@ from mainapp.services import CSVStream
 
 
 class DataSchemas(ListView):
+    """ Display main page with list of users schemas. """
     paginate_by = 13
     template_name = 'index.html'
     context_object_name = 'schemas'
@@ -20,22 +21,23 @@ class DataSchemas(ListView):
     def get_queryset(self):
         if self.request.user.is_anonymous:
             return SchemasGeneral.objects.none()
-        return SchemasGeneral.objects.filter(user=self.request.user)
+        return SchemasGeneral.objects.filter(user=self.request.user).order_by('-modified')
 
 
 class SchemaCreateView(LoginRequiredMixin, CreateView):
+    """ Create new schema. """
     form = SchemasGeneralForm
     login_url = '/accounts/login/'
 
     def get(self, request, *args, **kwargs):
         return render(request, 'schema_create-update.html', context={
-            'form': self.form,
-            'formset': SchemasColumnsFormset(queryset=SchemasColumns.objects.none())
+            'form': self.form,  #SchemaGeneralForm
+            'formset': SchemasColumnsFormset(queryset=SchemasColumns.objects.none())  # SchemaColumnsFormSet.
         })
 
     def post(self, request, *args, **kwargs):
-        form_post = self.form(request.POST)
-        formset = SchemasColumnsFormset(request.POST)
+        form_post = self.form(request.POST) # SchemaGeneralForm.
+        formset = SchemasColumnsFormset(request.POST) # SchemaColumnsFormSet.
 
         if all([formset.is_valid(), form_post.is_valid()]):
             parent = form_post.save(commit=False)
@@ -50,6 +52,7 @@ class SchemaCreateView(LoginRequiredMixin, CreateView):
 
 
 class SchemaDeleteView(LoginRequiredMixin, SuccessMessageMixin, DeleteView):
+    """ Delete the schema. """
     model = SchemasGeneral
     success_url = reverse_lazy('home')
     login_url = '/accounts/login/'
@@ -57,6 +60,7 @@ class SchemaDeleteView(LoginRequiredMixin, SuccessMessageMixin, DeleteView):
 
 
 class SchemaUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
+    """ Update the schema. """
     model = SchemasGeneral
     template_name = 'schema_create-update.html'
     success_url = reverse_lazy('home')
@@ -66,11 +70,13 @@ class SchemaUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(**kwargs)
+        # Contex for formset.
         context['formset'] = SchemasColumnsFormset(queryset=SchemasColumns.objects.filter(general_id=self.kwargs['pk']))
         return context
 
     def post(self, request, *args, **kwargs):
         super(SchemaUpdateView, self).post(request)
+        # Post for formset.
         formset = SchemasColumnsFormset(request.POST)
         if formset.is_valid():
             for form in formset:
@@ -81,20 +87,25 @@ class SchemaUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
 
 
 class SchemaCsvCreate(LoginRequiredMixin, ListView):
+    """ Download the current schema. """
     model = SchemasColumns
     template_name = 'schema_csv_create.html'
     context_object_name = 'schema'
     login_url = '/accounts/login/'
 
     def get_queryset(self):
+        # Get SchemasColumns objects by SchemaGeneral.id.
         return SchemasColumns.objects.filter(general_id=self.kwargs['pk'])
 
     def get(self, request, *args, **kwargs):
         schema_values = self.get_queryset()
+        # Get number of rows from user.
         csv_rows = request.GET.get('csv_rows', False)
+        delimiter = SchemasGeneral.objects.get(id=self.kwargs['pk']).column_separator
+        quotechar = SchemasGeneral.objects.get(id=self.kwargs['pk']).string_character
 
-        # my/url/?csv_rows=int
+        # If my/url/?csv_rows=int.
         if csv_rows:
             csv_stream = CSVStream()
-            return csv_stream.export_csv_file(request, schema_values, csv_rows)
+            return csv_stream.export_csv_file(request, schema_values, csv_rows, delimiter, quotechar)
         return super(SchemaCsvCreate, self).get(request, *args, **kwargs)

@@ -20,7 +20,7 @@
 
 </style>
 
-
+<!--errors-->
 {% if form.errors %}
 <p>Your username and password didn't match. Please try again.</p>
 {% endif %}
@@ -34,6 +34,7 @@
     {% endif %}
 {% endif %}
 
+<!--form-->
 <form method="post" action="{% url 'login' %}">
 {% csrf_token %}
 
