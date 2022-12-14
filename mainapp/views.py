@@ -21,7 +21,7 @@ class DataSchemas(ListView):
     def get_queryset(self):
         if self.request.user.is_anonymous:
             return SchemasGeneral.objects.none()
-        return SchemasGeneral.objects.filter(user=self.request.user).order_by('-modified')
+        return SchemasGeneral.objects.filter(user=self.request.user).order_by('-id')
 
 
 class SchemaCreateView(LoginRequiredMixin, CreateView):
