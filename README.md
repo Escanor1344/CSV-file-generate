@@ -22,7 +22,7 @@ want to see in your file and press the button "Export CSV". The file will downlo
 ___
 1. Authorization system using **django.contrib.auth**.
 2. Website written strictly on **OPP**.
-3. The site uses Django features such as *formsets, Jinja 2, messages framework, CVS modul* and so on. 
+3. The site uses Django features such as *formsets, Jinja 2, messages framework, CSV module* and so on. 
 4. Site was stylized with **Bootstrap 5**, **HTML** and **CSS**.
 5. Maintaining the correct project structure, like separation of business logic from models and views into *services.py*. 
 
